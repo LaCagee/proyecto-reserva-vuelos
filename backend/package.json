@@ -1,0 +1,15 @@
+{
+  "name": "servidor_reservas_vuelos",
+  "version": "1.0.0",
+  "description": "sistema de reservas de vuelos CienteServidor",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mysql2": "^3.14.4"
+  }
+}
