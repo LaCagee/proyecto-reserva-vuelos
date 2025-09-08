@@ -6,7 +6,7 @@
 
   "scripts": {
     "start": "node backend/server.js",
-    "dev": "nodemon backend/server.js",
+    "dev": "nodemon server.js",
     "test": "node backend/test/test-connection.js",
     "setup": "node backend/setup/setup-database.js",
     "seed": "node backend/setup/seed-data.js"

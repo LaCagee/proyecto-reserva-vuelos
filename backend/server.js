@@ -1,11 +1,11 @@
 // backend/server.js
-import express, { json, urlencoded, static } from 'express';
-import { join } from 'path';
-import { testConnection } from './models/db';
+const express = require('express');
+const path = require('path');
+const { testConnection } = require('./models/db');
 
 // Importar rutas
-import vuelosRoutes from './routes/vuelos';
-import comprasRoutes from './routes/compras';
+const vuelosRoutes = require('./routes/vuelos');
+const comprasRoutes = require('./routes/compras');
 
 /**
  * Inicializa y configura el servidor Express
@@ -15,8 +15,8 @@ function createApp() {
   const app = express();
 
   // Middleware básico
-  app.use(json()); // Para parsear JSON
-  app.use(urlencoded({ extended: true })); // Para parsear form data
+  app.use(express.json()); // Para parsear JSON
+  app.use(express.urlencoded({ extended: true })); // Para parsear form data
 
   // Middleware para CORS (permitir peticiones desde el frontend)
   app.use((req, res, next) => {
@@ -33,7 +33,7 @@ function createApp() {
   });
 
   // Servir archivos estáticos del frontend
-  app.use(static(join(__dirname, '../frontend')));
+  app.use(express.static(path.join(__dirname, '../frontend')));
 
   // Middleware de logging para desarrollo
   app.use((req, res, next) => {
@@ -48,16 +48,16 @@ function createApp() {
 
   // Ruta raíz - servir index.html
   app.get('/', (req, res) => {
-    res.sendFile(join(__dirname, '../frontend/index.html'));
+    res.sendFile(path.join(__dirname, '../frontend/index.html'));
   });
 
   // Rutas para las páginas del frontend
   app.get('/resultados', (req, res) => {
-    res.sendFile(join(__dirname, '../frontend/resultados.html'));
+    res.sendFile(path.join(__dirname, '../frontend/resultados.html'));
   });
 
   app.get('/compra', (req, res) => {
-    res.sendFile(join(__dirname, '../frontend/compra.html'));
+    res.sendFile(path.join(__dirname, '../frontend/compra.html'));
   });
 
   // Ruta de health check
@@ -69,14 +69,16 @@ function createApp() {
     });
   });
 
-  // Manejo de rutas no encontradas (404)
-  app.use('*', (req, res) => {
-    res.status(404).json({ 
-      error: 'Ruta no encontrada',
-      path: req.originalUrl,
-      message: 'La ruta solicitada no existe en este servidor'
-    });
+// Manejo de rutas no encontradas (404)
+app.use((req, res) => {
+  res.status(404).json({
+    error: 'Ruta no encontrada',
+    path: req.originalUrl,
+    message: 'La ruta solicitada no existe en este servidor'
   });
+});
+
+
 
   // Middleware global de manejo de errores
   app.use((error, req, res, next) => {
@@ -142,32 +144,10 @@ async function startServer(port = 3000) {
   }
 }
 
-
-
 // Solo ejecutar si este archivo es llamado directamente
 if (require.main === module) {
   const PORT = process.env.PORT || 3000;
   startServer(PORT);
 }
 
-export default { createApp, startServer };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Servidor en puerto 3000
-app.listen(3000, () => {
-    testConnection();
-  console.log('Servidor corriendo en http://localhost:3000');
-});
+module.exports = { createApp, startServer };

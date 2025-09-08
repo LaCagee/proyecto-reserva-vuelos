@@ -5,12 +5,12 @@ const nodemailer = require('nodemailer');
  * Configuración del transportador de email
  * En producción, usar variables de entorno para mayor seguridad
  */
-const transporter = nodemailer.createTransporter({
+const transporter = nodemailer.createTransport({
   // Configuración para Gmail (puedes cambiar por otro proveedor)
   service: 'gmail',
   auth: {
-    user: process.env.EMAIL_USER || 'tu_email@gmail.com', // Cambiar por tu email
-    pass: process.env.EMAIL_PASS || 'tu_password_app'     // Usar password de aplicación
+    user: process.env.EMAIL_USER || 'matiaseduardocaceresrojas09@gmail.com', // Cambiar por tu email
+    pass: process.env.EMAIL_PASS || 'qwjm ansh cxoh vqvr'     // Usar password de aplicación
   }
 });
 
