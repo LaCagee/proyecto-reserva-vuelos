@@ -1,11 +1,11 @@
 // backend/server.js
-const express = require('express');
-const path = require('path');
-const { testConnection } = require('./models/db');
+import express, { json, urlencoded, static } from 'express';
+import { join } from 'path';
+import { testConnection } from './models/db';
 
 // Importar rutas
-const vuelosRoutes = require('./routes/vuelos');
-const comprasRoutes = require('./routes/compras');
+import vuelosRoutes from './routes/vuelos';
+import comprasRoutes from './routes/compras';
 
 /**
  * Inicializa y configura el servidor Express
@@ -15,8 +15,8 @@ function createApp() {
   const app = express();
 
   // Middleware básico
-  app.use(express.json()); // Para parsear JSON
-  app.use(express.urlencoded({ extended: true })); // Para parsear form data
+  app.use(json()); // Para parsear JSON
+  app.use(urlencoded({ extended: true })); // Para parsear form data
 
   // Middleware para CORS (permitir peticiones desde el frontend)
   app.use((req, res, next) => {
@@ -33,7 +33,7 @@ function createApp() {
   });
 
   // Servir archivos estáticos del frontend
-  app.use(express.static(path.join(__dirname, '../frontend')));
+  app.use(static(join(__dirname, '../frontend')));
 
   // Middleware de logging para desarrollo
   app.use((req, res, next) => {
@@ -48,16 +48,16 @@ function createApp() {
 
   // Ruta raíz - servir index.html
   app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/index.html'));
+    res.sendFile(join(__dirname, '../frontend/index.html'));
   });
 
   // Rutas para las páginas del frontend
   app.get('/resultados', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/resultados.html'));
+    res.sendFile(join(__dirname, '../frontend/resultados.html'));
   });
 
   app.get('/compra', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/compra.html'));
+    res.sendFile(join(__dirname, '../frontend/compra.html'));
   });
 
   // Ruta de health check
@@ -150,7 +150,7 @@ if (require.main === module) {
   startServer(PORT);
 }
 
-module.exports = { createApp, startServer };
+export default { createApp, startServer };
 
 
 

@@ -1,16 +1,62 @@
 {
-  "name": "servidor_reservas_vuelos",
+  "name": "sistema-reserva-vuelos",
   "version": "1.0.0",
-  "description": "sistema de reservas de vuelos CienteServidor",
-  "main": "server.js",
+  "description": "Sistema de reservas de vuelos con arquitectura Cliente-Servidor desarrollado con Node.js, Express y MySQL",
+  "main": "backend/server.js",
+
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node backend/server.js",
+    "dev": "nodemon backend/server.js",
+    "test": "node backend/test/test-connection.js",
+    "setup": "node backend/setup/setup-database.js",
+    "seed": "node backend/setup/seed-data.js"
   },
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "nodejs",
+    "express",
+    "mysql",
+    "reservas",
+    "vuelos",
+    "cliente-servidor",
+    "sistema-reservas"
+  ],
+  "author": "Matías Cáceres y Diego Orellana",
+  "license": "MIT",
   "dependencies": {
     "express": "^5.1.0",
-    "mysql2": "^3.14.4"
+    "mysql2": "^3.14.4",
+    "nodemailer": "^7.0.6"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/usuario/sistema-reserva-vuelos.git"
+  },
+  "bugs": {
+    "url": "https://github.com/usuario/sistema-reserva-vuelos/issues"
+  },
+  "homepage": "https://github.com/usuario/sistema-reserva-vuelos#readme",
+  "config": {
+    "port": "3000",
+    "db_host": "localhost",
+    "db_name": "sistema_vuelos"
+  },
+  "nodemonConfig": {
+    "watch": [
+      "backend/"
+    ],
+    "ext": "js,json",
+    "ignore": [
+      "node_modules/",
+      "frontend/",
+      "*.log"
+    ],
+    "delay": "1000"
   }
 }
