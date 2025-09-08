@@ -15,8 +15,8 @@ function createApp() {
   const app = express();
 
   // Middleware básico
-  app.use(express.json()); // Para parsear JSON
-  app.use(express.urlencoded({ extended: true })); // Para parsear form data
+  app.use(express.json()); 
+  app.use(express.urlencoded({ extended: true })); 
 
   // Middleware para CORS (permitir peticiones desde el frontend)
   app.use((req, res, next) => {
