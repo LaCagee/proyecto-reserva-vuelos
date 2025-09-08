@@ -3,33 +3,15 @@ const nodemailer = require('nodemailer');
 
 /**
  * Configuración del transportador de email
- * En producción, usar variables de entorno para mayor seguridad
  */
 const transporter = nodemailer.createTransport({
   // Configuración para Gmail (puedes cambiar por otro proveedor)
   service: 'gmail',
   auth: {
-    user: process.env.EMAIL_USER || 'matiaseduardocaceresrojas09@gmail.com', // Cambiar por tu email
-    pass: process.env.EMAIL_PASS || 'qwjm ansh cxoh vqvr'     // Usar password de aplicación
+    user: process.env.EMAIL_USER || 'matiaseduardocaceresrojas09@gmail.com', 
+    pass: process.env.EMAIL_PASS || 'qwjm ansh cxoh vqvr'     
   }
 });
-
-/**
- * Configuración alternativa para servicios SMTP personalizados
- * Descomenta y modifica según tu proveedor de email
- */
-/*
-const transporter = nodemailer.createTransporter({
-  host: 'smtp.tu-proveedor.com',
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.EMAIL_USER || 'tu_email@proveedor.com',
-    pass: process.env.EMAIL_PASS || 'tu_password'
-  }
-});
-*/
-
 /**
  * Verifica la configuración del transportador de email
  * @returns {Promise<boolean>} true si la configuración es válida
@@ -115,14 +97,7 @@ async function enviarBoletoEmail(datosBoleto) {
       to: usuario.email,
       subject: `🎫 Tu Boleto de Vuelo - ${codigo}`,
       text: textContent,
-      html: htmlContent,
-      attachments: [
-        // Opcional: Adjuntar código QR o PDF del boleto
-        // {
-        //   filename: `boleto-${codigo}.pdf`,
-        //   content: generarPDFBoleto(datosBoleto) // Función que genere PDF
-        // }
-      ]
+      html: htmlContent      
     };
 
     console.log(`📧 Enviando boleto a: ${usuario.email}`);
