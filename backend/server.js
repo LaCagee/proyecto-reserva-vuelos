@@ -36,7 +36,7 @@ function createApp() {
   app.use(express.static(path.join(__dirname, '../frontend')));
 
   // Middleware de logging para desarrollo
-  app.use((req, res, next) => {
+  app.use((req, res, next) => {    
     const timestamp = new Date().toISOString();
     console.log(`[${timestamp}] ${req.method} ${req.url}`);
     next();
@@ -48,15 +48,18 @@ function createApp() {
 
   // Ruta raíz - servir index.html
   app.get('/', (req, res) => {
+    console.log("estas en index :"+ __dirname);
     res.sendFile(path.join(__dirname, '../frontend/index.html'));
   });
 
   // Rutas para las páginas del frontend
   app.get('/resultados', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/resultados.html'));
+    console.log(path.resolve(__dirname, '../frontend/resultados.html'));
+    res.sendFile(path.resolve(__dirname, '../frontend/resultados.html'));
   });
 
   app.get('/compra', (req, res) => {
+
     res.sendFile(path.join(__dirname, '../frontend/compra.html'));
   });
 

@@ -22,6 +22,6 @@ CREATE TABLE compras (
 INSERT INTO vuelos (origen, destino, fecha_salida, asientos_disponibles, precio)
 VALUES
 ('Talca', 'Santiago', '2025-09-15 08:00:00', 50, 35000),
-('Santiago', 'Concepción', '2025-09-16 10:30:00', 40, 42000),
+('Santiago', 'Concepcion', '2025-09-16 10:30:00', 40, 42000),
 ('Temuco', 'Santiago', '2025-09-17 14:15:00', 30, 39000),
 ('Santiago', 'La Serena', '2025-09-18 09:45:00', 20, 45000);

@@ -156,37 +156,43 @@ function setupOriginDestinationValidation() {
  */
 async function handleSearchSubmit(event) {
     event.preventDefault();
-    
+
     const formData = new FormData(event.target);
+
+    // Convertir la fecha a YYYY-MM-DD
+    const fechaInput = formData.get('fecha');
+    const fechaObj = new Date(fechaInput);
+    const fechaFormateada = fechaObj.toISOString().split('T')[0]; // "YYYY-MM-DD"
+
     const searchParams = {
         origen: formData.get('origen'),
         destino: formData.get('destino'),
-        fecha: formData.get('fecha')
+        fecha: fechaFormateada
     };
-    
+
     // Validar datos
     if (!validateSearchParams(searchParams)) {
         return;
     }
-    
+
     // Mostrar loading
     showLoadingOverlay(true);
     toggleSubmitButton(true);
-    
+
     try {
         const vuelos = await buscarVuelos(searchParams);
-        
+
         if (vuelos && vuelos.length > 0) {
             // Guardar criterios de búsqueda y resultados
             sessionStorage.setItem('searchCriteria', JSON.stringify(searchParams));
             sessionStorage.setItem('searchResults', JSON.stringify(vuelos));
-            
+
             // Redirigir a página de resultados
             window.location.href = '/resultados';
         } else {
             showMessage('No se encontraron vuelos disponibles con esos criterios', 'info');
         }
-        
+
     } catch (error) {
         console.error('Error en búsqueda:', error);
         showMessage('Error al buscar vuelos. Inténtalo nuevamente.', 'error');
@@ -195,6 +201,7 @@ async function handleSearchSubmit(event) {
         toggleSubmitButton(false);
     }
 }
+
 
 /**
  * Valida los parámetros de búsqueda
