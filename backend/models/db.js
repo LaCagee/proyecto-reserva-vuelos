@@ -4,11 +4,12 @@ const mysql = require('mysql2/promise');
 const pool = mysql.createPool({
   host: 'localhost',       
   user: 'root',            
-  password: 'xcasdqwe1', 
+  password: '', 
   database: 'sistema_vuelos', 
   waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0
+  queueLimit: 0,
+  port: 3306
 });
 // Función para probar la conexión
 const testConnection = async () => {
