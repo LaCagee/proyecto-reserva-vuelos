@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Reservas - Buscar Vuelos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            width: 90%;
+            max-width: 500px;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background-color: #f8f9fa;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn-primary {
+            width: 100%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            color: white;
+            padding: 18px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            color: #667eea;
+            font-weight: 600;
+            margin-top: 20px;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #667eea;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background-color: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #c33;
+            display: none;
+        }
+
+        .cities-info {
+            background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .cities-info h3 {
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .cities-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .city-tag {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .city-tag:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 20px;
+                padding: 30px 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✈️ Reserva tu Vuelo</h1>
+            <p>Encuentra el vuelo perfecto para ti</p>
+        </div>
+
+        <form id="searchForm">
+            <div class="form-group">
+                <label for="origen">Ciudad de Origen</label>
+                <input 
+                    type="text" 
+                    id="origen" 
+                    class="form-control" 
+                    placeholder="Ej: Santiago"
+                    required
+                    autocomplete="off"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="destino">Ciudad de Destino</label>
+                <input 
+                    type="text" 
+                    id="destino" 
+                    class="form-control" 
+                    placeholder="Ej: Concepción"
+                    required
+                    autocomplete="off"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="fecha">Fecha de Salida</label>
+                <input 
+                    type="date" 
+                    id="fecha" 
+                    class="form-control" 
+                    required
+                >
+            </div>
+
+            <button type="submit" class="btn-primary">
+                Buscar Vuelos
+            </button>
+        </form>
+
+        <div id="loading" class="loading">
+            Buscando vuelos disponibles...
+        </div>
+
+        <div id="error" class="error-message"></div>
+
+        <div class="cities-info">
+            <h3>🌎 Ciudades Disponibles</h3>
+            <p>Haz clic para seleccionar rápidamente</p>
+            <div class="cities-list">
+                <span class="city-tag" onclick="selectCity('Santiago')">Santiago</span>
+                <span class="city-tag" onclick="selectCity('Concepción')">Concepción</span>
+                <span class="city-tag" onclick="selectCity('Valparaíso')">Valparaíso</span>
+                <span class="city-tag" onclick="selectCity('La Serena')">La Serena</span>
+                <span class="city-tag" onclick="selectCity('Temuco')">Temuco</span>
+                <span class="city-tag" onclick="selectCity('Puerto Montt')">Puerto Montt</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let currentInput = null;
+
+        // Configurar fecha mínima (hoy)
+        document.addEventListener('DOMContentLoaded', function() {
+            const fechaInput = document.getElementById('fecha');
+            const today = new Date().toISOString().split('T')[0];
+            fechaInput.min = today;
+            fechaInput.value = today;
+
+            // Detectar en qué campo está el usuario
+            document.getElementById('origen').addEventListener('focus', () => currentInput = 'origen');
+            document.getElementById('destino').addEventListener('focus', () => currentInput = 'destino');
+        });
+
+        // Función para seleccionar ciudad
+        function selectCity(city) {
+            if (currentInput) {
+                document.getElementById(currentInput).value = city;
+            } else {
+                // Si no hay input seleccionado, poner en origen
+                document.getElementById('origen').value = city;
+            }
+        }
+
+        // Manejar envío del formulario
+        document.getElementById('searchForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const origen = document.getElementById('origen').value.trim();
+            const destino = document.getElementById('destino').value.trim();
+            const fecha = document.getElementById('fecha').value;
+            
+            // Validaciones básicas
+            if (!origen || !destino || !fecha) {
+                showError('Todos los campos son obligatorios');
+                return;
+            }
+
+            if (origen.toLowerCase() === destino.toLowerCase()) {
+                showError('El origen y destino deben ser diferentes');
+                return;
+            }
+
+            // Validar fecha
+            const selectedDate = new Date(fecha);
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            
+            if (selectedDate < today) {
+                showError('La fecha debe ser hoy o posterior');
+                return;
+            }
+
+            hideError();
+            showLoading(true);
+            
+            try {
+                // Construir URL de búsqueda
+                const searchParams = new URLSearchParams({
+                    origen: origen,
+                    destino: destino,
+                    fecha: fecha
+                });
+                
+                const response = await fetch(`/api/vuelos/buscar?${searchParams}`);
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || 'Error al buscar vuelos');
+                }
+                
+                // Guardar parámetros de búsqueda
+                sessionStorage.setItem('searchParams', JSON.stringify({
+                    origen,
+                    destino,
+                    fecha
+                }));
+                
+                // Guardar resultados
+                sessionStorage.setItem('searchResults', JSON.stringify(data));
+                
+                // Redirigir a resultados
+                window.location.href = '/resultados';
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showError(error.message || 'Error al conectar con el servidor. Verifica que esté ejecutándose.');
+            } finally {
+                showLoading(false);
+            }
+        });
+
+        function showLoading(show) {
+            const loading = document.getElementById('loading');
+            const submitBtn = document.querySelector('.btn-primary');
+            
+            loading.style.display = show ? 'block' : 'none';
+            submitBtn.disabled = show;
+            submitBtn.textContent = show ? 'Buscando...' : 'Buscar Vuelos';
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        function hideError() {
+            const errorDiv = document.getElementById('error');
+            errorDiv.style.display = 'none';
+        }
+    </script>
+</body>
+</html>

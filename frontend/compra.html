@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprar Boleto</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        .flight-summary {
+            background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .flight-summary h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .summary-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .summary-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.1rem;
+        }
+
+        .summary-icon {
+            font-size: 1.3rem;
+            opacity: 0.9;
+        }
+
+        .price-highlight {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .price-highlight .price {
+            font-size: 2rem;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .purchase-form h3 {
+            color: #2c3e50;
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background-color: #f8f9fa;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn-purchase {
+            width: 100%;
+            background: linear-gradient(45deg, #10ac84, #00d2d3);
+            border: none;
+            color: white;
+            padding: 18px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn-purchase:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(16, 172, 132, 0.3);
+        }
+
+        .btn-purchase:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-back {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-right: 15px;
+        }
+
+        .btn-back:hover {
+            background: #5a6268;
+            transform: translateY(-1px);
+        }
+
+        .buttons-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .error-message {
+            background-color: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #c33;
+            display: none;
+        }
+
+        .success-message {
+            background-color: #efe;
+            color: #3a5;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            border-left: 4px solid #3a5;
+            display: none;
+            text-align: center;
+        }
+
+        .success-message h3 {
+            color: #2d6a2d;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .ticket-code {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 1.2rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin: 15px 0;
+            border: 2px dashed #3a5;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            color: #667eea;
+            font-weight: 600;
+            margin-top: 20px;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #667eea;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .no-flight {
+            text-align: center;
+            padding: 60px 20px;
+            color: #7f8c8d;
+        }
+
+        .no-flight-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .no-flight h2 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .security-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #6c757d;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 15px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .summary-details {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .buttons-row {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .btn-back {
+                margin-right: 0;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎫 Finalizar Compra</h1>
+            <p>Completa tu reserva de vuelo</p>
+        </div>
+
+        <div id="no-flight-selected" class="card no-flight" style="display: none;">
+            <div class="no-flight-icon">✈️</div>
+            <h2>No hay vuelo seleccionado</h2>
+            <p>Debes seleccionar un vuelo antes de proceder con la compra.</p>
+            <br>
+            <button class="btn-back" onclick="goBack()">
+                Volver a Resultados
+            </button>
+        </div>
+
+        <div id="purchase-section">
+            <div class="card">
+                <div class="flight-summary">
+                    <h2>📋 Resumen del Vuelo</h2>
+                    <div class="summary-details">
+                        <div class="summary-item">
+                            <span class="summary-icon">📍</span>
+                            <span>
+                                <strong>Ruta:</strong><br>
+                                <span id="flightRoute">-</span>
+                            </span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-icon">📅</span>
+                            <span>
+                                <strong>Fecha:</strong><br>
+                                <span id="flightDate">-</span>
+                            </span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-icon">🕐</span>
+                            <span>
+                                <strong>Hora:</strong><br>
+                                <span id="flightTime">-</span>
+                            </span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-icon">💺</span>
+                            <span>
+                                <strong>Asientos:</strong><br>
+                                <span id="flightSeats">-</span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="price-highlight">
+                        <span class="price" id="flightPrice">$0</span>
+                        <span>Precio Total</span>
+                    </div>
+                </div>
+
+                <div class="purchase-form">
+                    <h3>📧 Información del Pasajero</h3>
+                    
+                    <form id="purchaseForm">
+                        <div class="form-group">
+                            <label for="correo">Correo Electrónico</label>
+                            <input 
+                                type="email" 
+                                id="correo" 
+                                class="form-control" 
+                                placeholder="tu@email.com"
+                                required
+                                autocomplete="email"
+                            >
+                            <small style="color: #6c757d; margin-top: 5px; display: block;">
+                                📱 Recibirás tu boleto electrónico en este correo
+                            </small>
+                        </div>
+
+                        <div class="buttons-row">
+                            <button type="button" class="btn-back" onclick="goBack()">
+                                ← Volver
+                            </button>
+                            <button type="submit" class="btn-purchase">
+                                💳 Confirmar Compra
+                            </button>
+                        </div>
+                    </form>
+
+                    <div id="loading" class="loading">
+                        Procesando tu compra...
+                    </div>
+
+                    <div id="error" class="error-message"></div>
+
+                    <div id="success" class="success-message">
+                        <h3>🎉 ¡Compra Exitosa!</h3>
+                        <p>Tu boleto ha sido generado correctamente</p>
+                        <div class="ticket-code">
+                            <span id="ticketCode">BOL-2025-ABC123</span>
+                        </div>
+                        <p>
+                            📧 Hemos enviado los detalles a tu correo electrónico.<br>
+                            🎫 Guarda este código para consultar tu reserva.
+                        </p>
+                        <br>
+                        <button class="btn-purchase" onclick="newBooking()">
+                            Hacer Nueva Reserva
+                        </button>
+                    </div>
+
+                    <div class="security-info">
+                        🔒 Tu información está protegida con cifrado SSL.<br>
+                        Este es un sistema académico de demostración.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedFlight = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFlightData();
+            setupForm();
+        });
+
+        function loadFlightData() {
+            const flightData = sessionStorage.getItem('selectedFlight');
+            
+            if (!flightData) {
+                document.getElementById('no-flight-selected').style.display = 'block';
+                document.getElementById('purchase-section').style.display = 'none';
+                return;
+            }
+
+            selectedFlight = JSON.parse(flightData);
+            displayFlightInfo(selectedFlight);
+        }
+
+        function displayFlightInfo(vuelo) {
+            const fecha = new Date(vuelo.fecha_salida);
+            
+            document.getElementById('flightRoute').textContent = 
+                `${vuelo.origen} → ${vuelo.destino}`;
+            
+            document.getElementById('flightDate').textContent = 
+                fecha.toLocaleDateString('es-CL', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+            
+            document.getElementById('flightTime').textContent = 
+                fecha.toLocaleTimeString('es-CL', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            
+            document.getElementById('flightSeats').textContent = 
+                `${vuelo.asientos_disponibles} disponibles`;
+            
+            document.getElementById('flightPrice').textContent = 
+                vuelo.precio_formateado;
+        }
+
+        function setupForm() {
+            document.getElementById('purchaseForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const correo = document.getElementById('correo').value.trim();
+                
+                if (!correo) {
+                    showError('El correo electrónico es obligatorio');
+                    return;
+                }
+
+                if (!isValidEmail(correo)) {
+                    showError('Por favor ingresa un correo electrónico válido');
+                    return;
+                }
+
+                if (!selectedFlight) {
+                    showError('Error: no se encontró información del vuelo');
+                    return;
+                }
+
+                await processPurchase(selectedFlight.id, correo);
+            });
+        }
+
+        async function processPurchase(vueloId, correo) {
+            hideError();
+            hideSuccess();
+            showLoading(true);
+
+            try {
+                const response = await fetch('/api/compras', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        vuelo_id: vueloId,
+                        correo_usuario: correo
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Error al procesar la compra');
+                }
+
+                // Mostrar éxito
+                showSuccess(data.codigo_boleto);
+                
+                // Limpiar formulario
+                document.getElementById('purchaseForm').reset();
+
+            } catch (error) {
+                console.error('Error en compra:', error);
+                showError(error.message || 'Error al conectar con el servidor');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function showLoading(show) {
+            const loading = document.getElementById('loading');
+            const form = document.getElementById('purchaseForm');
+            
+            loading.style.display = show ? 'block' : 'none';
+            form.style.display = show ? 'none' : 'block';
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            
+            // Scroll al error
+            errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function hideError() {
+            document.getElementById('error').style.display = 'none';
+        }
+
+        function showSuccess(ticketCode) {
+            const successDiv = document.getElementById('success');
+            document.getElementById('ticketCode').textContent = ticketCode;
+            successDiv.style.display = 'block';
+            
+            // Scroll al éxito
+            successDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function hideSuccess() {
+            document.getElementById('success').style.display = 'none';
+        }
+
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        function goBack() {
+            window.location.href = '/resultados';
+        }
+
+        function newBooking() {
+            // Limpiar datos
+            sessionStorage.clear();
+            window.location.href = '/';
+        }
+    </script>
+</body>
+</html>
