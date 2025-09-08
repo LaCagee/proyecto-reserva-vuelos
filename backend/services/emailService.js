@@ -8,8 +8,8 @@ const transporter = nodemailer.createTransport({
   // Configuración para Gmail (puedes cambiar por otro proveedor)
   service: 'gmail',
   auth: {
-    user: process.env.EMAIL_USER || 'matiaseduardocaceresrojas09@gmail.com', 
-    pass: process.env.EMAIL_PASS || 'qwjm ansh cxoh vqvr'     
+    user: process.env.EMAIL_USER || '', 
+    pass: process.env.EMAIL_PASS || ''     
   }
 });
 /**
